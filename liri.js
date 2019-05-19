@@ -8,33 +8,65 @@ const moment = require("moment")
 let term = process.argv.slice(3);
 let searchThis = term.join(" ");
 
+
+//SPOTIFY
 if (process.argv[2] === "spotify-this") {
-    var spotify = new Spotify(keys.spotify);
+    if (!searchThis) {
+        var spotify = new Spotify(keys.spotify);
+        spotify
+            .search({
+                type: 'track',
+                query: "The sign",
+                limit: 20
+            })
+            .then(function (response) {
+                let songInfo = response.tracks.items[7];
+                let artistName = songInfo.artists[0].name
+                let songName = songInfo.name;
+                let songLink = songInfo.href;
+                let albumName = songInfo.album.name;
 
-    spotify
-        .search({
-            type: 'track',
-            query: searchThis,
-            limit: 1
-        })
-        .then(function (response) {
-            let songInfo = response;
-            let artistName = songInfo.tracks.items[0].artists[0].name
-            let songName = songInfo.tracks.items[0].name;
-            let songLink = songInfo.tracks.items[0].href
-            let albumName = songInfo.tracks.items[0].album.name
+                
+                console.log(artistName)
+                    console.log(`
+                Song: ${songName}
+                Artist: ${artistName}
+                Album: ${albumName}
+                Link: ${songLink}`);
+            })
+            .catch(function (err) {
+                console.log(err);
+            });
+    } else {
+        var spotify = new Spotify(keys.spotify);
+
+        spotify
+            .search({
+                type: 'track',
+                query: searchThis,
+                limit: 1
+            })
+            .then(function (response) {
+                let songInfo = response.tracks.items[0];
+                let artistName = songInfo.artists[0].name
+                let songName = songInfo.name;
+                let songLink = songInfo.href;
+                let albumName = songInfo.album.name;
 
 
-            console.log(`
+                console.log(`
         Song: ${songName}
         Artist: ${artistName}
         Album: ${albumName}
         Link: ${songLink}`);
-        })
-        .catch(function (err) {
-            console.log(err);
-        });
-} else if (process.argv[2] === "concert-this") {
+            })
+            .catch(function (err) {
+                console.log(err);
+            });
+    }
+}
+//BANDSINTOWN
+else if (process.argv[2] === "concert-this") {
     let term = process.argv.slice(3);
     let searchThis = term.join("+");
     let queryURL = "https://rest.bandsintown.com/artists/" + searchThis + "/events?app_id=codingbootcamp";
@@ -57,7 +89,9 @@ if (process.argv[2] === "spotify-this") {
         .catch(function (error) {
             console.log(error);
         })
-} else if (process.argv[2] === "movie-this") {
+}
+//OMDB
+else if (process.argv[2] === "movie-this") {
     let term = process.argv.slice(3);
     let searchThis = term.join("+");
 
@@ -66,14 +100,15 @@ if (process.argv[2] === "spotify-this") {
     axios.get(queryURL)
         .then(
             function (response) {
-                let movieName = response.data.Title;
-                let movieYear = response.data.Year;
-                let movieRatingOmdb = response.data.Ratings[0].Value;
-                let movieRatingRotten = response.data.Ratings[1].Value;
-                let movieCountry = response.data.Country;
-                let movieLanguage = response.data.Language;
-                let moviePlot = response.data.Plot;
-                let movieActors = response.data.Actors
+                let nickname = response.data
+                let movieName = nickname.Title;
+                let movieYear = nickname.Year;
+                let movieRatingOmdb = nickname.Ratings[0].Value;
+                let movieRatingRotten = nickname.Ratings[1].Value;
+                let movieCountry = nickname.Country;
+                let movieLanguage = nickname.Language;
+                let moviePlot = nickname.Plot;
+                let movieActors = nickname.Actors
 
                 console.log(`
             Movie: ${movieName}
@@ -90,7 +125,9 @@ if (process.argv[2] === "spotify-this") {
         .catch(function (error) {
             console.log(error);
         })
-} else {
+}
+//TEXT READ
+else {
     console.log("reads random.txt");
 }
 
