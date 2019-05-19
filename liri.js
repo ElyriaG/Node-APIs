@@ -3,6 +3,7 @@ require("dotenv").config();
 const axios = require("axios");
 const Spotify = require('node-spotify-api');
 const keys = require("./keys.js");
+const moment = require("moment")
 
 let term = process.argv.slice(3);
 let searchThis = term.join(" ");
@@ -41,11 +42,16 @@ if (process.argv[2] === "spotify-this") {
     axios.get(queryURL)
         .then(
             function (response) {
-                let bandVenue = response.data[0].venue.name
+                let bandVenue = response.data[0].venue.name;
                 let venueLocation = response.data[0].venue.city + ", " + response.data[0].venue.country;
-                let eventDateUnfixed = response.data[0].datetime
-                let eventDateSliced = eventDateUnfixed.slice(0, 10)
-                console.log(eventDateFixed);
+                let eventDateUnfixed = response.data[0].datetime;
+                let eventDateSliced = eventDateUnfixed.slice(0, 10);
+                let eventDate = moment(eventDateSliced).format("MM/DD/YYYY");
+
+                console.log(`
+                Name of Venue: ${bandVenue}
+                Venue Location: ${venueLocation}
+                Date of Event: ${eventDate}`);
 
             })
         .catch(function (error) {
