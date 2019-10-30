@@ -199,7 +199,7 @@ else {
         else if (searchFunction === "concert-this") {
 
             let queryURL = "https://rest.bandsintown.com/artists/" + searchTerm + "/events?app_id=codingbootcamp";
-            
+
             axios.get(queryURL)
                 .then(
                     function (response) {
